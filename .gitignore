@@ -7,6 +7,9 @@ _compiler/
 tools/
 repo.sh
 
+# Isaac Sim experience .kit files (fetched from isaacsim-app-template at build time)
+source/apps/isaacsim.exp.*.kit
+
 # Cesium extension (downloaded at build time)
 source/extensions/cesium.omniverse/
 source/extensions/cesium.usd.plugins/

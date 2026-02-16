@@ -37,6 +37,16 @@ if [ ! -d "$SCRIPT_DIR/tools" ] || [ ! -f "$SCRIPT_DIR/repo.sh" ]; then
         exit 1
     fi
 
+    # Copy Isaac Sim experience .kit files (isaacsim.exp.base, isaacsim.exp.full, etc.)
+    # These are local app definitions that list all Isaac Sim extension dependencies.
+    mkdir -p "$SCRIPT_DIR/source/apps"
+    for kit_file in "$TEMP_DIR"/source/apps/isaacsim.exp.*.kit; do
+        if [ -f "$kit_file" ]; then
+            cp "$kit_file" "$SCRIPT_DIR/source/apps/"
+        fi
+    done
+    echo "Copied Isaac Sim experience .kit files."
+
     rm -rf "$TEMP_DIR"
     echo "Build tools fetched successfully."
 fi

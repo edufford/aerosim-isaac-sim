@@ -1,0 +1,11 @@
+[repo_launch]
+command = "launch"
+entry_point = "${root}/tools/repoman/launch.py:setup_repo_tool"
+
+[repo_package]
+command = "_package"
+
+[repo_package_app]
+command = "package"
+entry_point = "${root}/tools/repoman/package.py:setup_repo_tool"
+enabled = true

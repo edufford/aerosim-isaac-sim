@@ -1,0 +1,56 @@
+########################################################################################################################
+# Repo tool base settings
+########################################################################################################################
+
+[repo]
+
+# Use the Kit Template repo configuration as a base. Only override things specific to the repo.
+import_configs = [
+    "${root}/_repo/deps/repo_kit_tools/kit-template/repo.toml",
+    "${root}/_repo/deps/repo_kit_tools/kit-template/repo-external-app.toml",
+]
+
+# Repository Name
+name = "aerosim-isaac-sim"
+
+[repo_build]
+post_build.commands = []
+licensing.enabled = false
+fetch.pip.licensing_enabled = false
+
+[repo_build.build]
+enabled = true
+"platform:windows-x86_64".enabled = false
+
+[repo_build.msbuild]
+link_host_toolchain = false
+vs_version = "vs2022"
+
+[repo_build.docker]
+enabled = false
+
+[repo_docs]
+name = "AeroSim Isaac Sim"
+project = "aerosim-isaac-sim"
+api_output_directory = "api"
+use_fast_doxygen_conversion = false
+
+[repo_docs.kit]
+extensions = [
+    "aerosim.omniverse.extension",
+    "cesium.omniverse",
+    "cesium.usd.plugins",
+]
+
+[repo_precache_exts]
+registries = [
+    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/${kit_version_major}/shared" },
+    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
+    { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
+]
+
+[repo_package.packages."platform:windows-x86_64".docs]
+windows_max_path_length = 0
+
+[repo_symstore]
+enabled = false

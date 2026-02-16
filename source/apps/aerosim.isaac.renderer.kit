@@ -1,0 +1,31 @@
+[package]
+title = "AeroSim Isaac Sim Renderer"
+description = "An AeroSim Isaac Sim renderer application with camera sensor capture."
+version = "0.1.0"
+keywords = ["app", "AeroSim", "Isaac Sim", "viewport"]
+
+[dependencies]
+# Isaac Sim base experience (includes all core extensions, sensors, replicator, etc.)
+"isaacsim.exp.base" = {}
+
+# AeroSim extension (scene graph management, middleware, camera sensor capture)
+"aerosim.omniverse.extension" = {}
+
+# Cesium for Omniverse (geospatial terrain rendering)
+"cesium.omniverse" = {}
+
+[settings]
+app.content.emptyStageOnStart = true
+app.exts.folders.'++' = ["${app}/../exts"]
+app.window.title = "AeroSim Isaac Sim Renderer"
+app.window.width = 1700
+app.window.height = 900
+exts."cesium.omniverse".showOnStartup = false
+app.useFabricSceneDelegate = true
+
+[settings.exts."omni.kit.registry.nucleus"]
+registries = [
+    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/107/shared" },
+    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
+    { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
+]

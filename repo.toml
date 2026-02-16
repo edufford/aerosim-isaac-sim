@@ -18,6 +18,13 @@ post_build.commands = []
 licensing.enabled = false
 fetch.pip.licensing_enabled = false
 
+# Extend the packman target files to also pull USD for the extension's C++ compilation
+fetch.packman_target_files_to_pull = [
+    "${root}/tools/deps/kit-sdk.packman.xml",
+    "${root}/tools/deps/kit-sdk-deps.packman.xml",
+    "${root}/deps/ext-deps.packman.xml",
+]
+
 [repo_build.build]
 enabled = true
 "platform:windows-x86_64".enabled = false

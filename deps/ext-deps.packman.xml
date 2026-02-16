@@ -1,0 +1,12 @@
+<project toolsVersion="5.0">
+  <!-- Extension-specific dependencies not included in the isaacsim-app-template defaults. -->
+  <!-- The aerosim.omniverse.extension C++ plugin links against OpenUSD (usdGeom, usdUtils). -->
+
+  <!-- Import USD from Kit SDK all-deps -->
+  <import path="../_build/${platform_target}/${config}/kit/dev/all-deps.packman.xml">
+    <filter include="usd-${config}" />
+  </import>
+
+  <!-- Override linkPath to target-deps -->
+  <dependency name="usd-${config}" linkPath="../_build/target-deps/usd/${config}" />
+</project>

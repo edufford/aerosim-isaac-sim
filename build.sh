@@ -37,8 +37,8 @@ if [ ! -d "$SCRIPT_DIR/tools" ] || [ ! -f "$SCRIPT_DIR/repo.sh" ]; then
         exit 1
     fi
 
-    # Copy Isaac Sim experience .kit files (isaacsim.exp.base, isaacsim.exp.full, etc.)
-    # These are local app definitions that list all Isaac Sim extension dependencies.
+    # Copy Isaac Sim experience .kit files as base for our app .kit files.
+    # These define all Isaac Sim extension dependencies and settings.
     mkdir -p "$SCRIPT_DIR/source/apps"
     for kit_file in "$TEMP_DIR"/source/apps/isaacsim.exp.*.kit; do
         if [ -f "$kit_file" ]; then
@@ -49,6 +49,68 @@ if [ ! -d "$SCRIPT_DIR/tools" ] || [ ! -f "$SCRIPT_DIR/repo.sh" ]; then
 
     rm -rf "$TEMP_DIR"
     echo "Build tools fetched successfully."
+fi
+
+# ============================================================================
+# Step 1b: Generate AeroSim app .kit files from Isaac Sim base
+# ============================================================================
+# Our app .kit files are the Isaac Sim experience files with AeroSim and
+# Cesium extensions injected, plus AeroSim-specific settings appended.
+
+APPS_DIR="$SCRIPT_DIR/source/apps"
+
+AEROSIM_DEPS='# AeroSim extensions\
+"aerosim.omniverse.extension" = {}\
+"cesium.omniverse" = {}'
+
+AEROSIM_SETTINGS_BASE='
+# AeroSim settings
+[settings]
+exts."cesium.omniverse".showOnStartup = false
+
+[settings.app.window]
+title = "AeroSim Isaac Sim Renderer"
+'
+
+AEROSIM_SETTINGS_DEV='
+# AeroSim settings
+[settings]
+exts."cesium.omniverse".showOnStartup = false
+
+[settings.app.window]
+title = "AeroSim Isaac Sim Dev"
+'
+
+# Generate aerosim.isaac.renderer.kit from isaacsim.exp.base.kit
+if [ -f "$APPS_DIR/isaacsim.exp.base.kit" ]; then
+    cp "$APPS_DIR/isaacsim.exp.base.kit" "$APPS_DIR/aerosim.isaac.renderer.kit"
+    # Update package metadata
+    sed -i 's/^title = "Isaac Sim Base"/title = "AeroSim Isaac Sim Renderer"/' "$APPS_DIR/aerosim.isaac.renderer.kit"
+    sed -i 's/^description = "Base Isaac Sim App"/description = "AeroSim Isaac Sim renderer with Cesium geospatial terrain and camera sensor capture"/' "$APPS_DIR/aerosim.isaac.renderer.kit"
+    # Inject AeroSim extensions after [dependencies] line
+    sed -i "/^\[dependencies\]$/a\\$AEROSIM_DEPS" "$APPS_DIR/aerosim.isaac.renderer.kit"
+    # Append AeroSim-specific settings
+    echo "$AEROSIM_SETTINGS_BASE" >> "$APPS_DIR/aerosim.isaac.renderer.kit"
+    echo "Generated aerosim.isaac.renderer.kit from isaacsim.exp.base.kit"
+else
+    echo "Error: isaacsim.exp.base.kit not found. Cannot generate aerosim.isaac.renderer.kit."
+    exit 1
+fi
+
+# Generate aerosim.isaac.renderer.dev.kit from isaacsim.exp.full.kit
+if [ -f "$APPS_DIR/isaacsim.exp.full.kit" ]; then
+    cp "$APPS_DIR/isaacsim.exp.full.kit" "$APPS_DIR/aerosim.isaac.renderer.dev.kit"
+    # Update package metadata
+    sed -i 's/^title = "Isaac Sim Full"/title = "AeroSim Isaac Sim Dev"/' "$APPS_DIR/aerosim.isaac.renderer.dev.kit"
+    sed -i 's/^description = "Full Omniverse Isaac Sim Application"/description = "AeroSim Isaac Sim dev app with full GUI, Cesium terrain, and camera sensor capture"/' "$APPS_DIR/aerosim.isaac.renderer.dev.kit"
+    # Inject AeroSim extensions after [dependencies] line
+    sed -i "/^\[dependencies\]$/a\\$AEROSIM_DEPS" "$APPS_DIR/aerosim.isaac.renderer.dev.kit"
+    # Append AeroSim-specific settings
+    echo "$AEROSIM_SETTINGS_DEV" >> "$APPS_DIR/aerosim.isaac.renderer.dev.kit"
+    echo "Generated aerosim.isaac.renderer.dev.kit from isaacsim.exp.full.kit"
+else
+    echo "Error: isaacsim.exp.full.kit not found. Cannot generate aerosim.isaac.renderer.dev.kit."
+    exit 1
 fi
 
 # ============================================================================

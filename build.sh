@@ -40,7 +40,7 @@ AEROSIM_EXTENSION_REPO="https://github.com/edufford/aerosim-omniverse-extension.
 
 if [ ! -d "$TARGET_DIR/$AEROSIM_EXTENSION" ]; then
     echo "Cloning aerosim-omniverse-extension..."
-    git clone "$AEROSIM_EXTENSION_REPO" "$TARGET_DIR/$AEROSIM_EXTENSION"
+    git clone -b claude/isaac_sim "$AEROSIM_EXTENSION_REPO" "$TARGET_DIR/$AEROSIM_EXTENSION"
     echo "aerosim-omniverse-extension cloned."
 else
     echo "aerosim-omniverse-extension already present."

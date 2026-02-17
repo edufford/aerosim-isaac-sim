@@ -16,7 +16,11 @@ name = "aerosim-isaac-sim"
 [repo_build]
 post_build.commands = []
 licensing.enabled = false
-fetch.pip.licensing_enabled = false
+
+# Ensure source/apps directory exists before build
+fetch."platform:linux-x86_64".before_pull_commands = [
+    ["mkdir", "--parents", "${root}/source/apps"],
+]
 
 # Extend the packman target files to also pull USD for the extension's C++ compilation
 fetch.packman_target_files_to_pull = [
@@ -36,6 +40,33 @@ vs_version = "vs2022"
 [repo_build.docker]
 enabled = false
 
+[repo_build.fetch.pip]
+files_to_pull = [
+    "${root}/tools/deps/pip.toml"
+]
+licensing_enabled = false
+publish_pip_cache = false
+
+########################################################################################################################
+# Extensions precacher
+########################################################################################################################
+
+[repo_precache_exts]
+apps = [
+    "${root}/source/apps/aerosim.isaac.renderer.kit",
+    "${root}/source/apps/aerosim.isaac.renderer.dev.kit",
+]
+
+registries = [
+    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/${kit_version_major}/shared" },
+    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
+    { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
+]
+
+########################################################################################################################
+# Docs
+########################################################################################################################
+
 [repo_docs]
 name = "AeroSim Isaac Sim"
 project = "aerosim-isaac-sim"
@@ -49,12 +80,9 @@ extensions = [
     "cesium.usd.plugins",
 ]
 
-[repo_precache_exts]
-registries = [
-    { name = "kit/default", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/${kit_version_major}/shared" },
-    { name = "kit/sdk", url = "https://ovextensionsprod.blob.core.windows.net/exts/kit/prod/sdk/${kit_version_short}/${kit_git_hash}" },
-    { name = "kit/community", url = "https://dw290v42wisod.cloudfront.net/exts/kit/community" },
-]
+########################################################################################################################
+# Packaging
+########################################################################################################################
 
 [repo_package.packages."platform:windows-x86_64".docs]
 windows_max_path_length = 0

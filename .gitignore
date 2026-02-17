@@ -4,13 +4,6 @@ _repo/
 _compiler/
 logs/
 
-# NVIDIA Kit SDK tools (fetched at build time)
-tools/
-repo.sh
-
-# App .kit files (generated at build time from isaacsim-app-template base + AeroSim extensions)
-source/apps/*.kit
-
 # Cesium extension (downloaded at build time)
 source/extensions/cesium.omniverse/
 source/extensions/cesium.usd.plugins/

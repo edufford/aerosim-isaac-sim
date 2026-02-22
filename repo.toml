@@ -31,11 +31,13 @@ fetch.packman_target_files_to_pull = [
 
 [repo_build.build]
 enabled = true
-"platform:windows-x86_64".enabled = false
 
 [repo_build.msbuild]
-link_host_toolchain = false
-vs_version = "vs2022"
+# auto-configured by build.bat - do not edit manually
+link_host_toolchain = true
+vs_version = "vs2019" # premake5 action for PlatformToolset=v142; USD Boost deps are vc142
+vs_path = "C:\\Program Files\\Microsoft Visual Studio\\18\\Community" # VS2026 install with v142 toolchain
+msvc_version = "v142" # MSVC 14.29 → _MSC_VER<1930 → Boost vc142 (matches USD deps)
 
 [repo_build.docker]
 enabled = false

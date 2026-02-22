@@ -6,13 +6,15 @@ Built on the [isaacsim-app-template](https://github.com/isaac-sim/isaacsim-app-t
 
 ## Prerequisites
 
-- Linux x86_64
+- Linux x86_64 or Windows x86_64
 - NVIDIA GPU with RTX support
-- NVIDIA drivers 535+
-- Git, curl, unzip
+- NVIDIA drivers 535+ (Linux) or 536+ (Windows)
+- Git, curl, unzip (Linux) or Git, PowerShell (Windows)
+- **Windows only:** Visual Studio 2022 or 2026 with the **MSVC v142 (VS 2019) C++ build tools** component
 
 ## Setup and Build
 
+**Linux:**
 ```bash
 # Set required environment variables
 export AEROSIM_ISAAC_SIM_ROOT=/path/to/aerosim-isaac-sim
@@ -24,20 +26,46 @@ export AEROSIM_CESIUM_TOKEN=your_cesium_ion_token
 ./build.sh
 ```
 
-The build script handles:
+**Windows:**
+```bat
+:: Set required environment variables
+set AEROSIM_ISAAC_SIM_ROOT=C:\path\to\aerosim-isaac-sim
+set AEROSIM_ASSETS_ROOT=C:\path\to\aerosim-assets
+set AEROSIM_WORLD_LINK_LIB=C:\path\to\aerosim-world-link\lib
+set AEROSIM_CESIUM_TOKEN=your_cesium_ion_token
+
+:: Build (first run fetches Kit SDK tools, downloads Cesium, compiles C++ extension)
+build.bat
+```
+
+> **Note:** `build.bat` auto-detects Visual Studio (2026 or 2022) and requires the
+> **MSVC v142** toolchain component to be installed. Install it via
+> *Visual Studio Installer → Individual components → "MSVC v142 - VS 2019 C++ x64/x86 build tools"*.
+
+Both build scripts handle:
 1. Downloads [Cesium for Omniverse](https://github.com/CesiumGS/cesium-omniverse) v0.27.0 (if not present)
 2. Clones the [aerosim-omniverse-extension](https://github.com/edufford/aerosim-omniverse-extension) (if not present) — currently requires the `claude/isaac_sim` branch
 3. Copies the `aerosim-world-link` shared library for middleware communication
-4. Runs `repo.sh build` (NVIDIA's Kit SDK build toolchain via packman)
+4. Runs `repo.sh`/`repo.bat build` (NVIDIA's Kit SDK build toolchain via packman)
 
 ## Launch
 
+**Linux:**
 ```bash
 # Production app (viewport rendering only, no GUI panels)
 ./launch_aerosim_isaac_sim.sh
 
 # Development app (full Isaac Sim GUI with property panels, content browser, etc.)
 ./launch_aerosim_isaac_sim_dev.sh
+```
+
+**Windows:**
+```bat
+:: Production app
+launch_aerosim_isaac_sim.bat
+
+:: Development app
+launch_aerosim_isaac_sim_dev.bat
 ```
 
 Both apps connect to a running AeroSim simulation via middleware (Zenoh/Kafka). Start the simulation first:
@@ -153,12 +181,18 @@ Both apps connect to a running AeroSim simulation via middleware (Zenoh/Kafka). 
 
 ```
 aerosim-isaac-sim/
-├── build.sh                          # Build script (Cesium download, extension clone, repo.sh build)
-├── repo.sh                           # Kit SDK bootstrap (from isaacsim-app-template)
+├── build.sh                          # Linux build script
+├── build.bat                         # Windows build script (VS detection, patches, repo build)
+├── repo.sh                           # Linux Kit SDK bootstrap (from isaacsim-app-template)
+├── repo.bat                          # Windows Kit SDK bootstrap
 ├── repo.toml                         # Build configuration
 ├── premake5.lua                      # App and extension build definitions
-├── launch_aerosim_isaac_sim.sh       # Launch production app
-├── launch_aerosim_isaac_sim_dev.sh   # Launch dev app
+├── launch_aerosim_isaac_sim.sh       # Linux: launch production app
+├── launch_aerosim_isaac_sim.bat      # Windows: launch production app
+├── launch_aerosim_isaac_sim_dev.sh   # Linux: launch dev app
+├── launch_aerosim_isaac_sim_dev.bat  # Windows: launch dev app
+├── package.sh                        # Linux packaging script
+├── package.bat                       # Windows packaging script
 ├── source/
 │   ├── apps/
 │   │   ├── aerosim.isaac.renderer.kit      # Production .kit experience
@@ -167,7 +201,11 @@ aerosim-isaac-sim/
 │       ├── aerosim.omniverse.extension/    # AeroSim extension (cloned, branch: claude/isaac_sim)
 │       ├── cesium.omniverse/               # Cesium extension (downloaded)
 │       └── cesium.usd.plugins/             # Cesium USD plugins (downloaded)
-├── tools/                            # Kit SDK build toolchain (from isaacsim-app-template)
+├── tools/
+│   ├── apply_repobuild_patches.py    # Windows: VS2022/VS2026 + v142 compatibility patches
+│   ├── configure_vs.py               # Windows: writes VS path/version into repo.toml
+│   ├── deps/repo-deps.packman.xml    # Repo tool package versions (source of truth for repo_build version)
+│   └── ...                           # Kit SDK build toolchain (from isaacsim-app-template)
 └── deps/
     └── ext-deps.packman.xml          # USD library dependencies for C++ compilation
 ```
